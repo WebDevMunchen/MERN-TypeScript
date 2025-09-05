@@ -1,10 +1,14 @@
-import mongoose = require("mongoose");
+import mongoose from "mongoose";
+
+const connectionString = process.env.CONNECTION_STRING as string;
 
 mongoose
-  .connect(process.env.CONNECTION_STRING!)
+  .connect(connectionString)
   .then(() => {
-    console.log("DB connected!");
+    console.log("DB Connected");
   })
-  .catch((err) => {
-    console.log(err);
+  .catch((error) => {
+    console.error("DB Connection Error:", error);
   });
+
+export default mongoose;

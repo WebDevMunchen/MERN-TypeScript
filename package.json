@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "ts-node-dev --respawn --transpile-only index.ts"
+    "dev": "nodemon index.ts"
   },
   "repository": {
     "type": "git",
