@@ -2,6 +2,7 @@ import User from "../models/user-model";
 import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { AuthRequest } from "../types/user";
 
 export const register = async (
   req: Request,
@@ -78,12 +79,12 @@ export const logout = async (
 };
 
 export const getProfile = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { id } = (req as any).user;
+    const { id } = req.user;
 
     const user = await User.findById(id);
 

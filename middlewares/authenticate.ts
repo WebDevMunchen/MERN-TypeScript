@@ -1,8 +1,9 @@
-import type { Request, Response, NextFunction } from "express";
+import type { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+import { AuthRequest } from "../types/user";
 
 export const authenticate = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
@@ -15,7 +16,7 @@ export const authenticate = async (
 
     const payload = jwt.verify(token, process.env.JWT_SECRET!);
 
-    (req as any).user = payload;
+    req.user = payload;
 
     next();
   } catch (error) {
