@@ -25,12 +25,8 @@ export const register = asyncWrapper(
   }
 );
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const login = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
@@ -52,10 +48,8 @@ export const login = async (
     });
 
     res.cookie("access_token", token, { maxAge: 28800000 }).json(payload);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
 export const logout = async (
   req: Request,
@@ -67,12 +61,12 @@ export const logout = async (
     .json({ message: "Logout successful!" });
 };
 
-export const getProfile = async (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getProfile = asyncWrapper(
+  async (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     const { id } = req.user;
 
     const user = await User.findById(id);
@@ -82,17 +76,11 @@ export const getProfile = async (
     }
 
     res.status(200).json(user);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const getUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getUser = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
 
     const user = await User.findById(id);
@@ -102,31 +90,19 @@ export const getUser = async (
     }
 
     res.status(200).json(user);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const getAllUsers = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const getAllUsers = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const allUsers = await User.find({});
 
     res.status(200).json(allUsers);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const updateUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const updateUser = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
 
     const { email, role } = req.body;
@@ -142,17 +118,11 @@ export const updateUser = async (
     }
 
     res.status(201).json(user);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
-export const deleteUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const deleteUser = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { id } = req.params;
 
     const user = await User.findByIdAndDelete(id);
@@ -162,7 +132,5 @@ export const deleteUser = async (
     }
 
     res.status(201).json({ message: "Deleted!" });
-  } catch (error) {
-    next(error);
   }
-};
+);
