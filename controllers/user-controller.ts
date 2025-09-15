@@ -3,7 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types/user";
-import { CustomError } from "../types/CustomError";
+import { CustomError } from "../utils/CustomError";
 
 export const register = async (
   req: Request,
@@ -18,11 +18,7 @@ export const register = async (
     const findUser = await User.findOne({ email });
 
     if (findUser) {
-      const error: CustomError = new Error(
-        "User already exists!"
-      ) as CustomError;
-      error.statusCode = 409;
-      throw error;
+     throw new CustomError("User already exists!", 409)
     }
 
     const user = await User.create({
@@ -47,19 +43,13 @@ export const login = async (
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      const error: CustomError = new Error("User not found!") as CustomError;
-      error.statusCode = 404;
-      throw error;
+      throw new CustomError("User not found!", 404)
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      const error: CustomError = new Error(
-        "Incorrect password!"
-      ) as CustomError;
-      error.statusCode = 401!;
-      throw error;
+      throw new CustomError("Incorrect password!", 401);
     }
 
     const payload = { email: user.email, role: user.role, id: user._id };
@@ -95,9 +85,7 @@ export const getProfile = async (
     const user = await User.findById(id);
 
     if (!user) {
-      const error: CustomError = new Error("User not found!") as CustomError;
-      res.statusCode = 404;
-      throw error;
+      throw new CustomError("User not found!", 404)
     }
 
     res.status(200).json(user);
@@ -117,9 +105,7 @@ export const getUser = async (
     const user = await User.findById(id);
 
     if (!user) {
-      const error: CustomError = new Error("User not found!") as CustomError;
-      error.statusCode = 404;
-      throw error;
+      throw new CustomError("User not found!", 404)
     }
 
     res.status(200).json(user);
@@ -159,9 +145,7 @@ export const updateUser = async (
     const user = await User.findByIdAndUpdate(id, updatedFields, { new: true });
 
     if (!user) {
-      const error: CustomError = new Error("User not found!") as CustomError;
-      error.statusCode = 404;
-      throw error;
+      throw new CustomError("User not found!", 404)
     }
 
     res.status(201).json(user);
@@ -181,9 +165,7 @@ export const deleteUser = async (
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
-      const error: CustomError = new Error("User not found!") as CustomError;
-      error.statusCode = 404;
-      throw error;
+      throw new CustomError("User not found!", 404)
     }
 
     res.status(201).json({ message: "Deleted!" });
