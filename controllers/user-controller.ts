@@ -4,31 +4,26 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types/user";
 import { CustomError } from "../utils/CustomError";
+import { asyncWrapper } from "../utils/asyncWrapper";
 
-export const register = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): Promise<void> => {
-  try {
+export const register = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     const { email, password } = req.body;
 
     const findUser = await User.findOne({ email });
 
     if (findUser) {
-     throw new CustomError("User already exists!", 409)
+      throw new CustomError("User already exists!", 409);
     }
 
     const user = await User.create({
       email,
-      password
+      password,
     });
 
     res.status(201).json(user);
-  } catch (error) {
-    next(error);
   }
-};
+);
 
 export const login = async (
   req: Request,
@@ -41,7 +36,7 @@ export const login = async (
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      throw new CustomError("User not found!", 404)
+      throw new CustomError("User not found!", 404);
     }
 
     const match = await bcrypt.compare(password, user.password);
@@ -83,7 +78,7 @@ export const getProfile = async (
     const user = await User.findById(id);
 
     if (!user) {
-      throw new CustomError("User not found!", 404)
+      throw new CustomError("User not found!", 404);
     }
 
     res.status(200).json(user);
@@ -103,7 +98,7 @@ export const getUser = async (
     const user = await User.findById(id);
 
     if (!user) {
-      throw new CustomError("User not found!", 404)
+      throw new CustomError("User not found!", 404);
     }
 
     res.status(200).json(user);
@@ -143,7 +138,7 @@ export const updateUser = async (
     const user = await User.findByIdAndUpdate(id, updatedFields, { new: true });
 
     if (!user) {
-      throw new CustomError("User not found!", 404)
+      throw new CustomError("User not found!", 404);
     }
 
     res.status(201).json(user);
@@ -163,7 +158,7 @@ export const deleteUser = async (
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
-      throw new CustomError("User not found!", 404)
+      throw new CustomError("User not found!", 404);
     }
 
     res.status(201).json({ message: "Deleted!" });
