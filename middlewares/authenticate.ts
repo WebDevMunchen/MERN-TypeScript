@@ -1,6 +1,7 @@
 import type { Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types/user";
+import { CustomError } from "../types/CustomError";
 
 export const authenticate = async (
   req: AuthRequest,
@@ -11,7 +12,9 @@ export const authenticate = async (
     const { access_token: token } = req.cookies;
 
     if (!token) {
-      throw new Error("Forbidden!");
+      const error: CustomError = new Error("Forbidden!") as CustomError;
+      error.statusCode = 403;
+      throw error;
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET!);
@@ -20,7 +23,6 @@ export const authenticate = async (
 
     next();
   } catch (error) {
-    console.log(error);
-    res.status(403).send("Forbidden!");
+    next(error);
   }
 };

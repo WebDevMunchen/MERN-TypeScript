@@ -3,6 +3,7 @@ import type { Request, Response, NextFunction } from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types/user";
+import { CustomError } from "../types/CustomError";
 
 export const register = async (
   req: Request,
@@ -17,8 +18,11 @@ export const register = async (
     const findUser = await User.findOne({ email });
 
     if (findUser) {
-      res.status(400).json({ message: "User already exists!" });
-      return;
+      const error: CustomError = new Error(
+        "User already exists!"
+      ) as CustomError;
+      error.statusCode = 409;
+      throw error;
     }
 
     const user = await User.create({
@@ -28,8 +32,7 @@ export const register = async (
 
     res.status(201).json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
 
@@ -44,15 +47,19 @@ export const login = async (
     const user = await User.findOne({ email }).select("+password");
 
     if (!user) {
-      res.status(404).json({ message: "User not found!" });
-      return;
+      const error: CustomError = new Error("User not found!") as CustomError;
+      error.statusCode = 404;
+      throw error;
     }
 
     const match = await bcrypt.compare(password, user.password);
 
     if (!match) {
-      res.status(409).json({ message: "Incorrect password!" });
-      return;
+      const error: CustomError = new Error(
+        "Incorrect password!"
+      ) as CustomError;
+      error.statusCode = 401!;
+      throw error;
     }
 
     const payload = { email: user.email, role: user.role, id: user._id };
@@ -63,8 +70,7 @@ export const login = async (
 
     res.cookie("access_token", token, { maxAge: 28800000 }).json(payload);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
 
@@ -89,14 +95,14 @@ export const getProfile = async (
     const user = await User.findById(id);
 
     if (!user) {
-      res.status(404).json({ message: "User not found!" });
-      return;
+      const error: CustomError = new Error("User not found!") as CustomError;
+      res.statusCode = 404;
+      throw error;
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
 
@@ -111,14 +117,14 @@ export const getUser = async (
     const user = await User.findById(id);
 
     if (!user) {
-      res.status(404).json({ message: "User not found!" });
-      return;
+      const error: CustomError = new Error("User not found!") as CustomError;
+      error.statusCode = 404;
+      throw error;
     }
 
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
 
@@ -132,8 +138,7 @@ export const getAllUsers = async (
 
     res.status(200).json(allUsers);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
 
@@ -154,14 +159,14 @@ export const updateUser = async (
     const user = await User.findByIdAndUpdate(id, updatedFields, { new: true });
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      const error: CustomError = new Error("User not found!") as CustomError;
+      error.statusCode = 404;
+      throw error;
     }
 
     res.status(201).json(user);
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
 
@@ -176,13 +181,13 @@ export const deleteUser = async (
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
-      res.status(404).json({ message: "User not found" });
-      return;
+      const error: CustomError = new Error("User not found!") as CustomError;
+      error.statusCode = 404;
+      throw error;
     }
 
     res.status(201).json({ message: "Deleted!" });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Server error!" });
+    next(error);
   }
 };
