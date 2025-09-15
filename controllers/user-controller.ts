@@ -13,8 +13,6 @@ export const register = async (
   try {
     const { email, password } = req.body;
 
-    const hash = await bcrypt.hash(password, 10);
-
     const findUser = await User.findOne({ email });
 
     if (findUser) {
@@ -23,7 +21,7 @@ export const register = async (
 
     const user = await User.create({
       email,
-      password: hash,
+      password
     });
 
     res.status(201).json(user);
