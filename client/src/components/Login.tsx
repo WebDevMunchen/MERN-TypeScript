@@ -1,3 +1,39 @@
+import { useForm, type SubmitHandler } from "react-hook-form";
+import { axiosClient } from "../utils/axiosClient";
+
+type Inputs = {
+  email: string;
+  password: string;
+};
+
 export default function Login() {
-  return <>Login</>;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<Inputs>();
+
+  const onSubmit: SubmitHandler<Inputs> = (data) => {
+    axiosClient
+      .post("/user/login", data)
+      .then((response) => {
+        console.log(response.data);
+        console.log("Login successful!");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  return (
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <input defaultValue="test" {...register("email", { required: true })} />
+      {errors.email && <span>This field is required</span>}
+
+      <input {...register("password", { required: true })} />
+      {errors.password && <span>This field is required</span>}
+
+      <input type="submit" />
+    </form>
+  );
 }
