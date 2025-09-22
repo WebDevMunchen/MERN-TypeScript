@@ -23,14 +23,14 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.pre("findOne", function (next) {
-  const query = this.getQuery()
+  const query = this.getQuery();
 
-  if(query.email) {
-    query.email = query.email.toLowerCase()
+  if (query.email) {
+    query.email = query.email.toLowerCase();
   }
 
-  next()
-})
+  next();
+});
 
 const User = model("User", userSchema);
 
