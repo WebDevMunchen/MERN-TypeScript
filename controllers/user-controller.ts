@@ -4,10 +4,13 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { AuthRequest } from "../types/user";
 import { CustomError } from "../utils/CustomError";
-import { asyncWrapper } from "../utils/asyncWrapper";
 
-export const register = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const register = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const { email, password } = req.body;
 
     const findUser = await User.findOne({ email });
@@ -22,11 +25,17 @@ export const register = asyncWrapper(
     });
 
     res.status(201).json(user);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-export const login = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email }).select("+password");
@@ -48,8 +57,10 @@ export const login = asyncWrapper(
     });
 
     res.cookie("access_token", token, { maxAge: 28800000 }).json(payload);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
 export const logout = async (
   req: Request,
@@ -61,12 +72,12 @@ export const logout = async (
     .json({ message: "Logout successful!" });
 };
 
-export const getProfile = asyncWrapper(
-  async (
-    req: AuthRequest,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+export const getProfile = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const { id } = req.user;
 
     const user = await User.findById(id);
@@ -76,11 +87,17 @@ export const getProfile = asyncWrapper(
     }
 
     res.status(200).json(user);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-export const getUser = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const { id } = req.params;
 
     const user = await User.findById(id);
@@ -90,19 +107,31 @@ export const getUser = asyncWrapper(
     }
 
     res.status(200).json(user);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-export const getAllUsers = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const getAllUsers = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const allUsers = await User.find({});
 
     res.status(200).json(allUsers);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-export const updateUser = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const updateUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const { id } = req.params;
 
     const { email, role } = req.body;
@@ -118,11 +147,17 @@ export const updateUser = asyncWrapper(
     }
 
     res.status(201).json(user);
+  } catch (error) {
+    next(error);
   }
-);
+};
 
-export const deleteUser = asyncWrapper(
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+export const deleteUser = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
     const { id } = req.params;
 
     const user = await User.findByIdAndDelete(id);
@@ -132,5 +167,7 @@ export const deleteUser = asyncWrapper(
     }
 
     res.status(201).json({ message: "Deleted!" });
+  } catch (error) {
+    next(error);
   }
-);
+};
