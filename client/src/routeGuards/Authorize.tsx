@@ -6,7 +6,6 @@ export default function Authorize({ roles }: { roles: string | string[] }) {
   const context = useContext(AuthContext)
   const userRole = context?.user?.role ?? ""
 
-  // ensure we always have an array
   const allowedRoles = Array.isArray(roles) ? roles : [roles]
 
   return allowedRoles.includes(userRole)
