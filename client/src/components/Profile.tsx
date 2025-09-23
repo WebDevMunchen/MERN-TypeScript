@@ -1,5 +1,3 @@
 export default function Profile() {
-    return(
-        <>User Profile</>
-    )
+  return <>User Profile</>;
 }

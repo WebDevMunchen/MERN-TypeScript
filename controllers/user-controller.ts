@@ -8,7 +8,7 @@ import { asyncWrapper } from "../utils/asyncWrapper";
 
 export const register = asyncWrapper(
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
 
     const findUser = await User.findOne({ email });
 
@@ -19,6 +19,7 @@ export const register = asyncWrapper(
     const user = await User.create({
       email,
       password,
+      role
     });
 
     res.status(201).json(user);

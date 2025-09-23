@@ -17,7 +17,8 @@ export default function Navbar() {
             </>
           ) : (
             <>
-              <NavLink to={"/userProfile"}>Profile</NavLink>
+              <NavLink to={"/events"}>Events</NavLink>
+              <NavLink to={"/admin/userProfile"}>Profile</NavLink>
               <button onClick={() => context.logout()}>Logout</button>
             </>
           )}

@@ -12,7 +12,7 @@ export const authenticate = async (
     const { access_token: token } = req.cookies;
 
     if (!token) {
-      throw new CustomError("Forbidden!", 403)
+      throw new CustomError("Forbidden!", 403);
     }
 
     const payload = jwt.verify(token, process.env.JWT_SECRET!);
@@ -23,4 +23,14 @@ export const authenticate = async (
   } catch (error) {
     next(error);
   }
+};
+
+export const authorize = (role: string) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (role === req.user.role) {
+      return next();
+    } else {
+      res.status(401).send("Unauthorized");
+    }
+  };
 };

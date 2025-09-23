@@ -6,6 +6,8 @@ import Navbar from "./components/Navbar";
 import Protected from "./routeGuards/Protected";
 import Profile from "./components/Profile";
 import "./App.css";
+import Events from "./components/Events";
+import Authorize from "./routeGuards/Authorize";
 
 function App() {
   return (
@@ -17,7 +19,10 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Protected />}>
-          <Route path="/userProfile" element={<Profile />} />
+          <Route path="/events" element={<Events />} />
+          <Route path="/admin" element={<Authorize role="admin" />}>
+            <Route path="userProfile" element={<Profile />} />
+          </Route>
         </Route>
       </Routes>
     </>
