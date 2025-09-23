@@ -17,6 +17,7 @@ export default function Navbar() {
             </>
           ) : (
             <>
+              <NavLink to={"/userProfile"}>Profile</NavLink>
               <button onClick={() => context.logout()}>Logout</button>
             </>
           )}

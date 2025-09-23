@@ -2,8 +2,10 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./components/Home";
 import Login from "./components/Login";
 import Register from "./components/Register";
-import "./App.css";
 import Navbar from "./components/Navbar";
+import Protected from "./routeGuards/Protected";
+import Profile from "./components/Profile";
+import "./App.css";
 
 function App() {
   return (
@@ -14,6 +16,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Protected />}>
+          <Route path="/userProfile" element={<Profile />} />
+        </Route>
       </Routes>
     </>
   );
