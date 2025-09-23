@@ -4,7 +4,7 @@ import { AuthContext } from "../context/AuthProvider";
 import type { LoginData } from "../types/types";
 
 export default function Login() {
-  const authContext = useContext(AuthContext);
+  const context = useContext(AuthContext);
 
   const {
     register,
@@ -13,7 +13,7 @@ export default function Login() {
   } = useForm<LoginData>();
 
   const onSubmit: SubmitHandler<LoginData> = (data) => {
-    authContext?.login(data);
+    context?.login(data);
   };
 
   return (
