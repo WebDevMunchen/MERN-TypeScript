@@ -20,7 +20,8 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Protected />}>
           <Route path="/events" element={<Events />} />
-          <Route path="/admin" element={<Authorize role="admin" />}>
+          {/* <Route path="/admin" element={<Authorize role="admin" />}> */}
+          <Route path="/admin" element={<Authorize roles={["user", "admin"]} />}>
             <Route path="userProfile" element={<Profile />} />
           </Route>
         </Route>

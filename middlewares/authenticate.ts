@@ -25,12 +25,24 @@ export const authenticate = async (
   }
 };
 
-export const authorize = (role: string) => {
+// export const authorize = (role: string) => {
+//   return (req: AuthRequest, res: Response, next: NextFunction) => {
+//     if (role === req.user.role) {
+//       return next();
+//     } else {
+//       res.status(401).send("Unauthorized");
+//     }
+//   };
+// };
+
+export const authorize = (roles: string | string[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction) => {
-    if (role === req.user.role) {
-      return next();
-    } else {
-      res.status(401).send("Unauthorized");
+    const allowedRoles = Array.isArray(roles) ? roles : [roles]
+
+    if (req.user && allowedRoles.includes(req.user.role)) {
+      return next()
     }
-  };
-};
+
+    return res.status(401).send("Unauthorized")
+  }
+}
